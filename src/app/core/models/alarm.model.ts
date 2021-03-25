@@ -1,10 +1,16 @@
 export interface Alarm {
-  label: string;
-  message: string;
-  repeat: number[];
-  time: string;
-  sound: string;
-  snooze: boolean;
+  name: string;
+  //message: string;
+  volume: number;
+  device: string;
+  //repeat: number[];
+  lights: boolean;
+  context: string;
+  contextImage?: string;
+  cron: string;
+  //time: string;
+  //sound: string;
+  //snooze: boolean;
   active: boolean;
-  id: string;
+  id?: string;
 }

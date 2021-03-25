@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="secondary">
+      <ion-button color="danger" (click)="closeModal()"> Cancel </ion-button>
+    </ion-buttons>
+
+    <ion-title> Alarm </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <!--<img src="./madison.jpg" />-->
+    <ion-card-header>
+      <ion-card-title>{{ getTime(alarm) }}</ion-card-title>
+      <ion-card-subtitle>{{ alarm.name }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button (click)="stop()">
+        <ion-icon name="stop"></ion-icon>
+        Stop
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

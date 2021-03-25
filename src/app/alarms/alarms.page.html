@@ -1,17 +1,12 @@
 <ion-header translucent>
   <ion-toolbar>
-    <ion-buttons *ngIf="alarms.length > 0" slot="secondary">
-      <ion-button (click)="setEditable()">
-        {{editable ? 'Done' : 'Edit'}}
-      </ion-button>
-    </ion-buttons>
-
-    <ion-title>
-      Alarms
-    </ion-title>
+    <ion-title> Alarms </ion-title>
 
     <ion-buttons slot="primary">
-      <ion-button (click)="openModal()">
+      <ion-button (click)="ngOnInit()">
+        <ion-icon name="refresh-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="openModal(null)">
         <ion-icon name="add"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -28,58 +23,82 @@
   <ng-container *ngIf="alarms.length > 0; else error">
     <ion-list>
       <ion-item-sliding disabled="{editable}">
-        <ion-item
-          col-12
+        <ion-list
           class="alarm"
           *ngFor="let alarm of alarms"
-          (click)="editAlarm(alarm.id)"
           [ngClass]="{editable: editable}"
         >
-          <!-- <ion-note slot="start">Off</ion-note> -->
-          <!-- <div id="remove">
-              <ion-fab-button
-                *ngIf="editable"
+          <ion-item lines="none" col-12>
+            <!-- <ion-note slot="start">Off</ion-note> -->
+            <ion-label>
+              <h1>{{getTime(alarm)}}</h1>
+
+              <h2 class="days">
+                {{alarm.name}}
+                <span *ngFor="let day of alarm.repeat"
+                  >{{days[day]}}&nbsp;</span
+                >
+              </h2>
+            </ion-label>
+
+            <ion-item lines="none">
+              <ion-button
+                (click)="alarm.ringing ? stop(alarm) : test(alarm)"
+                size="small"
+                shape="round"
+                color="primary"
+              >
+                <ion-icon
+                  name="play-circle-outline"
+                  *ngIf="!alarm.ringing"
+                ></ion-icon>
+                <ion-icon
+                  name="stop-circle-outline"
+                  *ngIf="alarm.ringing"
+                ></ion-icon>
+              </ion-button>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-button
                 (click)="deleteAlarm(alarm.id)"
                 size="small"
                 shape="round"
-                color="danger"
+                color="primary"
               >
-                <ion-icon icon="remove"></ion-icon>
-              </ion-fab-button>
-            </div> -->
+                <ion-icon icon="trash-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
 
-          <ion-label>
-            <h1>{{alarm.time}}</h1>
+            <ion-item class="activeToggle" lines="none">
+              <ion-label>Active</ion-label>
 
-            <h2 class="days">
-              {{alarm.label}}
-              <span *ngFor="let day of alarm.repeat">{{days[day]}}&nbsp;</span>
-            </h2>
-          </ion-label>
+              <ion-toggle
+                [ngModel]="alarm.active"
+                (ionChange)="activateAlarm(alarm, $event)"
+              ></ion-toggle>
+            </ion-item>
 
-          <ion-toggle
-            *ngIf="!editable"
-            [checked]="alarm.active"
-            (ionChange)="updateAlarm(alarm.id)"
-          ></ion-toggle>
-
-          <!-- <ion-icon
+            <!-- <ion-icon
               *ngIf="editable"
               name="arrow-forward"
               id="more"
             ></ion-icon> -->
-        </ion-item>
+          </ion-item>
 
-        <ion-item-options side="end">
-          <!-- <ion-item-option
-            (click)="editAlarm(alarm.id)">Edit</ion-item-option> -->
-          <ion-item-option
-            color="danger"
-            expandable
-            (click)="deleteAlarm(alarm.id)"
-            >Delete</ion-item-option
-          >
-        </ion-item-options>
+          <ion-item lines="full" col-12>
+            <ion-item
+              class="day"
+              lines="none"
+              *ngFor="let day of days; index as i "
+              shape="round"
+            >
+              <div [ngClass]="isActiveDay(i, alarm) ? 'primary' : ''">
+                {{day.substring(0,2)}}
+              </div>
+            </ion-item>
+          </ion-item>
+        </ion-list>
       </ion-item-sliding>
     </ion-list>
   </ng-container>

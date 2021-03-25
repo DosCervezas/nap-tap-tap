@@ -1,9 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="secondary">
-      <ion-button color="danger" (click)="closeModal()">
-        Cancel
-      </ion-button>
+      <ion-button color="danger" (click)="closeModal()"> Cancel </ion-button>
     </ion-buttons>
 
     <ion-title>
@@ -11,9 +9,7 @@
     </ion-title>
 
     <ion-buttons slot="primary">
-      <ion-button (click)="setAlarm()">
-        Save
-      </ion-button>
+      <ion-button (click)="setAlarm()"> Save </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -52,34 +48,43 @@
       ></ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label>Message</ion-label>
-
-      <ion-input
-        [(ngModel)]="message"
-        class="ion-text-right"
-        placeholder="e.g.: Take your homework!"
-      ></ion-input>
-    </ion-item>
-
-    <ion-item *ngIf="ringtonesList.length > 0">
+    <ion-item *ngIf="playlists.length > 0">
       <!-- <ion-label>{{ringtonesList}}</ion-label> -->
-      <ion-label>Sound</ion-label>
+      <ion-label>Spotify Playlist</ion-label>
 
-      <ion-select [(ngModel)]="sound">
+      <ion-select [(ngModel)]="context">
         <ion-select-option
-          *ngFor="let ringtone of ringtonesList; let i = index"
-          value="{{ i }}"
+          *ngFor="let playlist of playlists"
+          value="{{ playlist.uri }}"
         >
-          {{ ringtone.name }}
+          {{ playlist.name }}
         </ion-select-option>
       </ion-select>
     </ion-item>
 
-    <ion-item>
-      <ion-label>Snooze</ion-label>
+    <!--<ion-item>
+      <ion-label>Devices</ion-label>
 
-      <ion-toggle [(ngModel)]="snooze"></ion-toggle>
+      <ion-select multiple placeholder="Never" [(ngModel)]="device">
+        <ion-select-option
+          *ngFor="let item of days; let i = index"
+          value="{{ i }}"
+        >
+          Every {{ item }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>-->
+
+    <ion-item>
+      <ion-label>Lights</ion-label>
+
+      <ion-toggle [(ngModel)]="lights"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Active</ion-label>
+
+      <ion-toggle [(ngModel)]="active"></ion-toggle>
     </ion-item>
   </ion-list>
 

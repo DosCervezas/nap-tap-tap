@@ -1,70 +1,86 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Storage } from '@ionic/storage';
+import { map } from 'rxjs/operators';
 import { v4 } from 'uuid';
 
 import { Alarm } from '../../models/alarm.model';
+import { environment } from 'src/environments/environment';
+import { Dto } from '../../models/dto.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AlarmService {
   private _alarms: BehaviorSubject<Array<Alarm>> = new BehaviorSubject([]);
+  private _server: string;
 
   public readonly alarms: Observable<
     Array<Alarm>
   > = this._alarms.asObservable();
 
-  constructor(private storage: Storage) {
-    this.getAlarms().then((alarms) => {
-      this._alarms.next(alarms);
-    });
+  constructor(private _httpClient: HttpClient) {
+    this._server = environment.server;
   }
 
-  async addAlarm({ ...settings }: Omit<Alarm, 'id'>) {
-    const alarms = await this.getAlarms();
-
-    const alarm = {
-      ...settings,
-      id: v4(),
-    };
-
-    alarms.push(alarm);
-
-    this.setAlarms(alarms);
+  addAlarm(alarm: Alarm): Observable<Alarm> {
+    return this._httpClient.post(this._server + '/alarms', alarm).pipe(
+      map((res: Dto<Alarm>) => {
+        return res.alarm;
+      })
+    );
   }
 
-  async getAlarms(): Promise<Array<Alarm>> {
-    const alarms = await this.storage.get('alarms');
-
-    return alarms || [];
+  testAlarm(id: string): Observable<Alarm> {
+    return this._httpClient.get(this._server + '/alarms/' + id + '/test').pipe(
+      map((res: Dto<Alarm>) => {
+        return res.alarm;
+      })
+    );
   }
 
-  async updateAlarm(id: string, settings: Omit<Alarm, 'id'>) {
-    console.log(settings);
-
-    const alarms = await this.getAlarms();
-
-    const update = alarms.findIndex((alarm) => alarm.id === id);
-
-    alarms[update] = { ...alarms[update], ...settings };
-
-    this.setAlarms(alarms);
+  getAlarms(): Observable<Alarm[]> {
+    return this._httpClient.get(this._server + '/alarms').pipe(
+      map((res: Dto<Alarm[]>) => {
+        return res.alarm;
+      })
+    );
   }
 
-  async deleteAlarm(id: string) {
-    let alarms = await this.getAlarms();
-
-    alarms = alarms.filter((alarm) => alarm.id !== id);
-
-    this.setAlarms(alarms);
+  getRingingAlarm(): Observable<Alarm> {
+    return this._httpClient.get(this._server + '/alarms/ringing').pipe(
+      map((res: Dto<Alarm>) => {
+        return res.alarm;
+      })
+    );
   }
 
-  private setAlarms(alarms: Array<Alarm>) {
-    alarms.sort((prev, next) => (prev.time > next.time ? 1 : -1));
+  deleteAlarm(id: string): Observable<boolean> {
+    return this._httpClient.delete(this._server + '/alarms/' + id).pipe(
+      map((res: Dto<boolean>) => {
+        return res.success;
+      })
+    );
+  }
 
-    this.storage.set('alarms', alarms).then((alarms) => {
-      this._alarms.next(alarms);
-    });
+  activateAlarm(id: string, activate: boolean): Observable<Alarm> {
+    return this._httpClient
+      .put(
+        this._server + '/alarms/' + id + '/activate/' + String(activate),
+        null
+      )
+      .pipe(
+        map((res: Dto<Alarm>) => {
+          return res.alarm;
+        })
+      );
+  }
+
+  stopAlarm(id: string): Observable<Alarm> {
+    return this._httpClient.get(this._server + '/alarms/' + id + '/stop').pipe(
+      map((res: Dto<Alarm>) => {
+        return res.alarm;
+      })
+    );
   }
 }
