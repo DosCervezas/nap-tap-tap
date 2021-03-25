@@ -35,9 +35,15 @@
 }
 
 .day {
+  width: 42px;
+
   .primary {
     color: rgb(231, 112, 23);
   }
+}
+
+.name {
+  max-width: 75px;
 }
 
 // .error {

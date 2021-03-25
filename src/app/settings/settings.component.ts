@@ -59,6 +59,9 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
+    let sunday = this.days.shift();
+    this.days.push(sunday);
+
     this.spotifyService.getPlaylists().subscribe(
       (playlists: Playlist[]) => {
         this.playlists = playlists;

@@ -110,7 +110,15 @@ export class AlarmsPage implements OnInit {
 
   getTime(alarm: Alarm) {
     let split: string[] = alarm.cron.split(' ');
-    return split[1] + ':' + split[0];
+    let hours = split[1];
+    let minutes = split[0];
+    if (hours.length == 1) {
+      hours = '0' + split[1];
+    }
+    if (minutes.length == 1) {
+      minutes = '0' + split[0];
+    }
+    return hours + ':' + minutes;
   }
 
   activateAlarm(alarm: Alarm, event: any) {
